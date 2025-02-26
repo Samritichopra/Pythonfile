@@ -1,18 +1,21 @@
-name: Docker Image  CI
+name: Devops SonarQube Analysis
+ 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
+ 
 jobs:
-  build:
+  sonar:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-    - name: Log in to Docker Hub
-      run: echo "${{ secrets.PASS }}" | docker login -u "${{ secrets.USER }}" --password-stdin
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag samritichopra1909/pyth
-    - name: Push Docker Image
-      run: docker push  samritichopra1909/pyth
+      - name: Checkout Code
+        uses: actions/checkout@v3
+ 
+      - name: Run SonarScanner
+        run: |
+          docker run --rm -v "$(pwd):/usr/src" sonarsource/sonar-scanner-cli \
+            -Dsonar.projectKey=pyth \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=http://13.232.4.242:9099 \
+            -Dsonar.login=sqp_5a0b42003373c49449eccc5256ab28d5a57cae30
