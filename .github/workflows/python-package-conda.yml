@@ -19,3 +19,20 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.host.url=http://13.232.4.242:9099 \
             -Dsonar.login=sqp_5a0b42003373c49449eccc5256ab28d5a57cae30
+
+  docker:
+    needs: sonar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+ 
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+ 
+      - name: Build Docker Image
+        run: docker build -t samritichopra1909/sam_flask:v1 .
+ 
+      - name: Push Docker Image to Docker Hub
+        run: docker push samritichopra1909/sam_flask:v1
+           
